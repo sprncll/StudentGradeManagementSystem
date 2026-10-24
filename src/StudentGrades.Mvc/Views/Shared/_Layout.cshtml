@@ -8,13 +8,14 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
+    <a class="visually-hidden-focusable" href="#main">Skip to content</a>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-dark bg-primary mb-4">
+        <nav class="navbar navbar-expand-sm navbar-dark bg-primary mb-4 shadow-sm">
             <div class="container">
                 <a class="navbar-brand fw-semibold" asp-controller="Home" asp-action="Index">Student Grade Management</a>
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <div class="d-flex align-items-center gap-3 text-white">
+                    <div class="d-flex align-items-center gap-3 text-white ms-auto">
                         <span class="small">
                             @User.Identity.Name
                             <span class="badge bg-light text-primary ms-1">@(User.IsInRole(AppRoles.Faculty) ? "Faculty" : "Student")</span>
@@ -28,7 +29,7 @@
         </nav>
     </header>
 
-    <main class="container pb-5">
+    <main id="main" class="container pb-5">
         @RenderBody()
     </main>
 

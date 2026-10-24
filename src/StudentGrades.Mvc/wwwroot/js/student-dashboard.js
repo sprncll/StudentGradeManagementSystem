@@ -19,7 +19,10 @@
     };
 
     function setTableMessage(message, cls) {
-        els.body.innerHTML = '<tr><td colspan="7" class="text-center py-4 ' + cls + '">' + api.escapeHtml(message) + '</td></tr>';
+        const spinner = /^Loading/.test(message)
+            ? '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>'
+            : '';
+        els.body.innerHTML = '<tr><td colspan="7" class="text-center py-4 ' + cls + '">' + spinner + api.escapeHtml(message) + '</td></tr>';
     }
 
     function render(grades) {
@@ -31,10 +34,10 @@
         }
 
         els.body.innerHTML = grades.map(g =>
-            '<tr>' +
+            '<tr class="' + (g.remarks === 'BEP/FAILED' ? 'row-failed' : '') + '">' +
             '<td class="fw-semibold">' + e(g.subjectCode) + '</td>' +
             '<td>' + e(g.subjectName) + '</td>' +
-            '<td class="text-center fs-5">' + e(g.grade) + '</td>' +
+            '<td class="text-center fs-5 grade-cell">' + e(g.grade) + '</td>' +
             '<td>' + api.remarkBadge(g.remarks) + '</td>' +
             '<td>' + e(g.semester) + '</td>' +
             '<td>' + e(g.schoolYear) + '</td>' +
@@ -43,9 +46,11 @@
         ).join('');
 
         const total = grades.reduce((sum, g) => sum + g.grade, 0);
+        const failed = grades.filter(g => g.remarks === 'BEP/FAILED').length;
         els.sumCount.textContent = grades.length;
         els.sumAverage.textContent = (total / grades.length).toFixed(2);
-        els.sumFailed.textContent = grades.filter(g => g.remarks === 'BEP/FAILED').length;
+        els.sumFailed.textContent = failed;
+        els.sumFailed.classList.toggle('text-danger', failed > 0);
         els.summary.hidden = false;
     }
 

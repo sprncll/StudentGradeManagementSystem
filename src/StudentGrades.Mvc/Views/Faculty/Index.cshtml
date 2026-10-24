@@ -19,18 +19,19 @@
     <div class="card-body">
         <form id="filter-form" class="row g-2 mb-3" autocomplete="off">
             <div class="col-md-5">
-                <input type="search" id="filter-search" class="form-control" placeholder="Search student no., name or subject" />
+                <input type="search" id="filter-search" class="form-control" aria-label="Search" placeholder="Search student no., name or subject" />
             </div>
             <div class="col-md-3">
-                <select id="filter-semester" class="form-select">
+                <select id="filter-semester" class="form-select" aria-label="Semester">
                     <option value="">All semesters</option>
                 </select>
             </div>
             <div class="col-md-2">
-                <input type="text" id="filter-year" class="form-control" placeholder="School year e.g. 2026-2027" />
+                <input type="text" id="filter-year" class="form-control" aria-label="School year" placeholder="School year e.g. 2026-2027" />
             </div>
-            <div class="col-md-2 d-grid">
-                <button type="submit" class="btn btn-outline-primary">Filter</button>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-outline-primary flex-fill">Filter</button>
+                <button type="button" class="btn btn-outline-secondary" id="btn-clear" title="Clear filters" aria-label="Clear filters">✕</button>
             </div>
         </form>
 

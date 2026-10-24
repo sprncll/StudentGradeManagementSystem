@@ -11,6 +11,7 @@
         filterSearch: document.getElementById('filter-search'),
         filterSemester: document.getElementById('filter-semester'),
         filterYear: document.getElementById('filter-year'),
+        clearButton: document.getElementById('btn-clear'),
         addButton: document.getElementById('btn-add'),
         modalEl: document.getElementById('grade-modal'),
         modalTitle: document.getElementById('grade-modal-title'),
@@ -67,7 +68,10 @@
     }
 
     function setTableMessage(message, cls) {
-        els.body.innerHTML = '<tr><td colspan="8" class="text-center py-4 ' + cls + '">' + api.escapeHtml(message) + '</td></tr>';
+        const spinner = /^Loading/.test(message)
+            ? '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>'
+            : '';
+        els.body.innerHTML = '<tr><td colspan="8" class="text-center py-4 ' + cls + '">' + spinner + api.escapeHtml(message) + '</td></tr>';
     }
 
     function renderGrades(grades) {
@@ -79,19 +83,19 @@
         }
         const e = api.escapeHtml;
         els.body.innerHTML = grades.map(g =>
-            '<tr>' +
+            '<tr class="' + (g.remarks === 'BEP/FAILED' ? 'row-failed' : '') + '">' +
             '<td><div class="fw-semibold">' + e(g.studentNumber) + '</div><div class="small text-muted">' + e(g.studentName) + '</div></td>' +
             '<td><div class="fw-semibold">' + e(g.subjectCode) + '</div><div class="small text-muted">' + e(g.subjectName) + '</div></td>' +
-            '<td class="text-center fs-5">' + e(g.grade) + '</td>' +
+            '<td class="text-center fs-5 grade-cell">' + e(g.grade) + '</td>' +
             '<td>' + api.remarkBadge(g.remarks) + '</td>' +
             '<td>' + e(g.semester) + '</td>' +
             '<td>' + e(g.schoolYear) + '</td>' +
             '<td class="small text-muted">' + e(api.formatDate(g.datePosted)) +
-                (g.dateModified ? '<br/>Edited ' + e(api.formatDate(g.dateModified)) : '') +
-                '<br/>by ' + e(g.facultyName) + '</td>' +
+            (g.dateModified ? '<br/>Edited ' + e(api.formatDate(g.dateModified)) : '') +
+            '<br/>by ' + e(g.facultyName) + '</td>' +
             '<td class="text-end text-nowrap">' +
-                '<button type="button" class="btn btn-sm btn-outline-primary me-1" data-action="edit" data-id="' + e(g.gradeId) + '">Edit</button>' +
-                '<button type="button" class="btn btn-sm btn-outline-danger" data-action="delete" data-id="' + e(g.gradeId) + '">Delete</button>' +
+            '<button type="button" class="btn btn-sm btn-outline-primary me-1" data-action="edit" data-id="' + e(g.gradeId) + '">Edit</button>' +
+            '<button type="button" class="btn btn-sm btn-outline-danger" data-action="delete" data-id="' + e(g.gradeId) + '">Delete</button>' +
             '</td>' +
             '</tr>'
         ).join('');
@@ -198,6 +202,9 @@
     els.addButton.addEventListener('click', () => openForm(null));
     els.form.addEventListener('submit', saveForm);
     els.filterForm.addEventListener('submit', event => { event.preventDefault(); loadGrades(); });
+    if (els.clearButton) {
+        els.clearButton.addEventListener('click', () => { els.filterForm.reset(); loadGrades(); });
+    }
     els.body.addEventListener('click', event => {
         const button = event.target.closest('button[data-action]');
         if (!button) return;
