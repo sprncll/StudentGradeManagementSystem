@@ -4,24 +4,30 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Student Grade Management System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
     <a class="visually-hidden-focusable" href="#main">Skip to content</a>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-dark bg-primary mb-4 shadow-sm">
+        <nav class="navbar navbar-expand-sm ust-nav mb-4">
             <div class="container">
-                <a class="navbar-brand fw-semibold" asp-controller="Home" asp-action="Index">Student Grade Management</a>
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <span class="brand-mark">SG</span>
+                    <span>Student Grade Management</span>
+                </a>
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <div class="d-flex align-items-center gap-3 text-white ms-auto">
-                        <span class="small">
-                            @User.Identity.Name
-                            <span class="badge bg-light text-primary ms-1">@(User.IsInRole(AppRoles.Faculty) ? "Faculty" : "Student")</span>
+                    <div class="d-flex align-items-center gap-3 ms-auto">
+                        <span class="user-chip">
+                            <span>@User.Identity.Name</span>
+                            <span class="role-pill">@(User.IsInRole(AppRoles.Faculty) ? "Faculty" : "Student")</span>
                         </span>
                         <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
-                            <button type="submit" class="btn btn-sm btn-outline-light">Sign out</button>
+                            <button type="submit" class="btn btn-sm btn-signout">Sign out</button>
                         </form>
                     </div>
                 }
@@ -33,9 +39,14 @@
         @RenderBody()
     </main>
 
-    <footer class="border-top py-3 text-muted small">
-        <div class="container">Web Systems and Technologies &middot; Final Practical Examination</div>
+    <footer class="ust-footer py-3 small">
+        <div class="container d-flex flex-wrap justify-content-between gap-2">
+            <span><strong>Student Grade Management System</strong></span>
+            <span>Web Systems and Technologies &middot; Final Practical Examination</span>
+        </div>
     </footer>
+
+    <div id="toast-area" aria-live="polite"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     @await RenderSectionAsync("Scripts", required: false)

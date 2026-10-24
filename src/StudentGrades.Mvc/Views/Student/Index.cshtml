@@ -4,64 +4,84 @@
 }
 <div id="api-config" data-api-base="@Model.ApiBaseUrl" data-token="@Model.AccessToken" hidden></div>
 
-<div class="mb-3">
-    <h1 class="h3 mb-0">My Grades</h1>
-    @* Name and student number are filled from GET /api/student/me *@
-    <div class="text-muted" id="student-info">
-        <span id="student-name">@Model.DisplayName</span>
-        <span id="student-number-wrap">· Student No. <strong id="student-number">@Model.Number</strong></span>
+<div class="hero mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+            <div class="eyebrow">Student</div>
+            <h1 class="h3">My Grades</h1>
+            @* Name and student number are filled from GET /api/student/me *@
+            <div class="hero-sub" id="student-info">
+                <span id="student-name">@Model.DisplayName</span>
+                <span id="student-number-wrap">· Student No. <strong id="student-number">@Model.Number</strong></span>
+            </div>
+            <span class="standing-pill" id="standing" hidden></span>
+        </div>
+        <div class="d-flex gap-2 no-print">
+            <button type="button" class="btn btn-outline-light" id="btn-print">Print</button>
+            <button type="button" class="btn btn-gold" id="btn-refresh">Refresh</button>
+        </div>
     </div>
 </div>
 
 <div id="alert-area" aria-live="polite"></div>
 
-<div class="row g-3 mb-3" id="summary" hidden>
-    <div class="col-sm-4">
-        <div class="card shadow-sm stat-tile">
-            <div class="card-body py-2">
-                <div class="small text-muted">Subjects</div><div class="h4 mb-0" id="sum-count">0</div>
-            </div>
+<div class="row g-3 mb-4" id="summary" hidden>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card is-dark">
+            <div class="stat-label">Subjects</div><div class="stat-value" id="sum-count">0</div>
         </div>
     </div>
-    <div class="col-sm-4">
-        <div class="card shadow-sm stat-tile">
-            <div class="card-body py-2">
-                <div class="small text-muted">Average grade</div><div class="h4 mb-0" id="sum-average">–</div>
-            </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-label">Average grade</div><div class="stat-value" id="sum-average">–</div>
         </div>
     </div>
-    <div class="col-sm-4">
-        <div class="card shadow-sm stat-tile">
-            <div class="card-body py-2">
-                <div class="small text-muted">Failed (BEP)</div><div class="h4 mb-0" id="sum-failed">0</div>
-            </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-label">Highest grade</div><div class="stat-value" id="sum-high">–</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-label">Failed (BEP)</div><div class="stat-value" id="sum-failed">0</div>
         </div>
     </div>
 </div>
 
-<div class="card shadow-sm">
+<div class="card">
     <div class="card-body">
-        <div class="table-responsive">
-            <table class="table align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>Subject Code</th>
-                        <th>Subject</th>
-                        <th class="text-center">Grade</th>
-                        <th>Remarks</th>
-                        <th>Semester</th>
-                        <th>School Year</th>
-                        <th>Instructor</th>
-                    </tr>
-                </thead>
-                <tbody id="grades-body">
-                    <tr><td colspan="7" class="text-center text-muted py-4">Loading your grades…</td></tr>
-                </tbody>
-            </table>
+        <div class="row g-2 align-items-center mb-3 no-print">
+            <div class="col-lg-7">
+                <div class="d-flex flex-wrap gap-2" id="term-chips" role="group" aria-label="Filter by term"></div>
+            </div>
+            <div class="col-lg-5">
+                <input type="search" id="grade-search" class="form-control" aria-label="Search subjects" placeholder="Search subject or instructor" autocomplete="off" />
+            </div>
+        </div>
+
+        <div class="table-shell">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle ust-table">
+                    <thead id="grades-head">
+                        <tr>
+                            <th data-col="subject" aria-sort="none"><button type="button" class="th-btn" data-sort="subject">Subject Code</button></th>
+                            <th>Subject</th>
+                            <th class="text-center" data-col="grade" aria-sort="none"><button type="button" class="th-btn" data-sort="grade">Grade</button></th>
+                            <th>Remarks</th>
+                            <th data-col="term" aria-sort="none"><button type="button" class="th-btn" data-sort="term">Semester</button></th>
+                            <th>School Year</th>
+                            <th>Instructor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="grades-body">
+                        <tr><td colspan="7" class="text-center text-muted py-4">Loading your grades…</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <div class="d-flex justify-content-between align-items-center mt-2">
+            <span class="small text-muted" id="result-count"></span>
             <span class="small text-muted" id="last-loaded"></span>
-            <button type="button" class="btn btn-sm btn-outline-primary" id="btn-refresh">Refresh</button>
         </div>
     </div>
 </div>

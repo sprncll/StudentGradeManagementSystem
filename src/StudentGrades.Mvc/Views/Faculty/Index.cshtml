@@ -5,54 +5,89 @@
 @* The API URL and the signed-in user's JWT are handed to the JavaScript through data-* attributes. *@
 <div id="api-config" data-api-base="@Model.ApiBaseUrl" data-token="@Model.AccessToken" hidden></div>
 
-<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
-    <div>
-        <h1 class="h3 mb-0">Faculty Dashboard</h1>
-        <div class="text-muted">@Model.DisplayName @(string.IsNullOrEmpty(Model.Number) ? "" : $"· {Model.Number}")</div>
+<div class="hero mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+            <div class="eyebrow">Faculty</div>
+            <h1 class="h3">Faculty Dashboard</h1>
+            <div class="hero-sub">@Model.DisplayName @(string.IsNullOrEmpty(Model.Number) ? "" : $"· {Model.Number}")</div>
+        </div>
+        <button type="button" class="btn btn-gold btn-lg" id="btn-add">+ Add grade</button>
     </div>
-    <button type="button" class="btn btn-primary" id="btn-add">+ Add grade</button>
 </div>
 
 <div id="alert-area" aria-live="polite"></div>
 
-<div class="card shadow-sm">
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="stat-card is-dark">
+            <div class="stat-label">Records</div>
+            <div class="stat-value" id="st-total">0</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-label">Average grade</div>
+            <div class="stat-value" id="st-avg">–</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-label">Passing rate</div>
+            <div class="stat-value" id="st-pass">–</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <button type="button" class="stat-card stat-card-btn" id="st-failed-tile" aria-pressed="false">
+            <div class="stat-label">Failed (BEP)</div>
+            <div class="stat-value" id="st-failed">0</div>
+            <div class="stat-hint">Click to show only failed</div>
+        </button>
+    </div>
+</div>
+
+<div class="card">
     <div class="card-body">
         <form id="filter-form" class="row g-2 mb-3" autocomplete="off">
             <div class="col-md-5">
-                <input type="search" id="filter-search" class="form-control" aria-label="Search" placeholder="Search student no., name or subject" />
+                <div class="input-group">
+                    <span class="input-group-text kbd-hint" title="Press / to search">/</span>
+                    <input type="search" id="filter-search" class="form-control" aria-label="Search" placeholder="Search student no., name or subject" />
+                </div>
             </div>
             <div class="col-md-3">
                 <select id="filter-semester" class="form-select" aria-label="Semester">
                     <option value="">All semesters</option>
                 </select>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <input type="text" id="filter-year" class="form-control" aria-label="School year" placeholder="School year e.g. 2026-2027" />
             </div>
-            <div class="col-md-2 d-flex gap-2">
-                <button type="submit" class="btn btn-outline-primary flex-fill">Filter</button>
+            <div class="col-md-1 d-grid">
                 <button type="button" class="btn btn-outline-secondary" id="btn-clear" title="Clear filters" aria-label="Clear filters">✕</button>
             </div>
         </form>
 
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>Student</th>
-                        <th>Subject</th>
-                        <th class="text-center">Grade</th>
-                        <th>Remarks</th>
-                        <th>Semester</th>
-                        <th>School Year</th>
-                        <th>Posted / Modified</th>
-                        <th class="text-end">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="grades-body">
-                    <tr><td colspan="8" class="text-center text-muted py-4">Loading grade records…</td></tr>
-                </tbody>
-            </table>
+        <div class="table-shell">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle ust-table">
+                    <thead id="grades-head">
+                        <tr>
+                            <th data-col="student" aria-sort="none"><button type="button" class="th-btn" data-sort="student">Student</button></th>
+                            <th data-col="subject" aria-sort="none"><button type="button" class="th-btn" data-sort="subject">Subject</button></th>
+                            <th class="text-center" data-col="grade" aria-sort="none"><button type="button" class="th-btn" data-sort="grade">Grade</button></th>
+                            <th>Remarks</th>
+                            <th data-col="semester" aria-sort="none"><button type="button" class="th-btn" data-sort="semester">Semester</button></th>
+                            <th data-col="schoolYear" aria-sort="none"><button type="button" class="th-btn" data-sort="schoolYear">School Year</button></th>
+                            <th data-col="datePosted" aria-sort="none"><button type="button" class="th-btn" data-sort="datePosted">Posted / Modified</button></th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="grades-body">
+                        <tr><td colspan="8" class="text-center text-muted py-4">Loading grade records…</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <div id="grades-count" class="small text-muted mt-2"></div>
     </div>
@@ -60,7 +95,7 @@
 
 <!-- Add / Edit modal -->
 <div class="modal fade" id="grade-modal" tabindex="-1" aria-labelledby="grade-modal-title" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <form class="modal-content" id="grade-form" novalidate autocomplete="off">
             <div class="modal-header">
                 <h2 class="modal-title h5" id="grade-modal-title">Add grade</h2>
@@ -91,6 +126,7 @@
                         <label for="f-grade" class="form-label">Grade (0–100, whole number)</label>
                         <input id="f-grade" name="grade" type="number" min="0" max="100" step="1" class="form-control" required />
                         <div class="invalid-feedback" data-for="Grade"></div>
+                        <div class="mt-2 small text-muted">Remark preview: <span id="remark-preview"><span class="rm rm-empty">—</span></span></div>
                     </div>
                     <div class="col-md-4">
                         <label for="f-semester" class="form-label">Semester</label>
@@ -104,8 +140,8 @@
                     </div>
                 </div>
                 <p class="form-text mt-3 mb-0">
-                    Remarks are computed by the server from the grade (95–100 CMS, 90–94 SP, 85–89 SAP,
-                    80–84 GP, 75–79 EP, 0–74 BEP/FAILED) and cannot be entered here.
+                    The server has the final say on remarks (95–100 CMS, 90–94 SP, 85–89 SAP,
+                    80–84 GP, 75–79 EP, 0–74 BEP/FAILED). The preview above is only a guide.
                 </p>
             </div>
             <div class="modal-footer">
@@ -113,6 +149,26 @@
                 <button type="submit" class="btn btn-primary" id="btn-save">Save</button>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- Delete confirmation modal -->
+<div class="modal fade" id="delete-modal" tabindex="-1" aria-labelledby="delete-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="delete-modal-title">Delete grade record?</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>This permanently removes the record. It cannot be undone.</p>
+                <div class="delete-detail" id="delete-detail"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="btn-confirm-delete">Delete record</button>
+            </div>
+        </div>
     </div>
 </div>
 

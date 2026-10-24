@@ -2,30 +2,80 @@
 @{
     ViewData["Title"] = "Sign in";
 }
-<div class="row justify-content-center mt-4 mt-md-5">
-    <div class="col-md-6 col-lg-5">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h1 class="h4 mb-1">Sign in</h1>
-                <p class="text-muted small mb-4">Faculty and students use their school email.</p>
-
-                <form asp-action="Login" method="post" novalidate>
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
-                    <input type="hidden" asp-for="ReturnUrl" />
-
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label"></label>
-                        <input asp-for="Email" type="email" class="form-control" autocomplete="username" autofocus />
-                        <span asp-validation-for="Email" class="text-danger small"></span>
+<div class="row justify-content-center mt-2 mt-md-4">
+    <div class="col-lg-10 col-xl-9">
+        <div class="auth-shell">
+            <div class="row g-0">
+                <div class="col-md-5 d-none d-md-block">
+                    <div class="auth-side">
+                        <div class="brand-mark mb-3" style="width:2.6rem;height:2.6rem;font-size:1.1rem">SG</div>
+                        <h2>Student Grade <span>Management</span></h2>
+                        <p class="text-secondary mb-0" style="color:#bdbdbd!important">One place for grades, remarks and records.</p>
+                        <ul>
+                            <li>Faculty post, edit and manage grades</li>
+                            <li>Students view their own grades securely</li>
+                            <li>Remarks computed automatically</li>
+                        </ul>
                     </div>
-                    <div class="mb-4">
-                        <label asp-for="Password" class="form-label"></label>
-                        <input asp-for="Password" class="form-control" autocomplete="current-password" />
-                        <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+                <div class="col-md-7">
+                    <div class="auth-form">
+                        <h1 class="h3 mb-1">Welcome back</h1>
+                        <p class="text-muted small mb-4">Faculty and students use their school email.</p>
+
+                        <form asp-action="Login" method="post" novalidate id="login-form">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+                            <input type="hidden" asp-for="ReturnUrl" />
+
+                            <div class="mb-3">
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" type="email" class="form-control form-control-lg" autocomplete="username" autofocus />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                            <div class="mb-2">
+                                <label asp-for="Password" class="form-label"></label>
+                                <div class="input-group">
+                                    <input asp-for="Password" class="form-control form-control-lg" autocomplete="current-password" />
+                                    <button type="button" class="btn pw-toggle" id="pw-toggle" aria-label="Show password" aria-pressed="false">Show</button>
+                                </div>
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                                <div class="caps-hint mt-1" id="caps-hint" hidden>Caps Lock is on</div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg w-100 mt-3" id="login-submit">Sign in</button>
+                        </form>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Sign in</button>
-                </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const pw = document.getElementById('Password');
+            const toggle = document.getElementById('pw-toggle');
+            const caps = document.getElementById('caps-hint');
+            const form = document.getElementById('login-form');
+            const submit = document.getElementById('login-submit');
+            if (!pw) return;
+
+            toggle.addEventListener('click', function () {
+                const show = pw.type === 'password';
+                pw.type = show ? 'text' : 'password';
+                toggle.textContent = show ? 'Hide' : 'Show';
+                toggle.setAttribute('aria-pressed', String(show));
+                toggle.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+                pw.focus();
+            });
+            pw.addEventListener('keyup', function (e) {
+                caps.hidden = !(e.getModifierState && e.getModifierState('CapsLock'));
+            });
+            pw.addEventListener('blur', function () { caps.hidden = true; });
+            form.addEventListener('submit', function () {
+                submit.innerHTML = '<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Signing in…';
+                submit.disabled = true;
+            });
+        })();
+    </script>
+}

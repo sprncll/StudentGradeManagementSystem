@@ -101,16 +101,53 @@
     }
 
     const REMARK_CLASSES = {
-        'CMS': 'bg-success',
-        'SP': 'bg-primary',
-        'SAP': 'bg-info text-dark',
-        'GP': 'bg-secondary',
-        'EP': 'bg-warning text-dark',
-        'BEP/FAILED': 'bg-danger'
+        'CMS': 'rm-cms',
+        'SP': 'rm-sp',
+        'SAP': 'rm-sap',
+        'GP': 'rm-gp',
+        'EP': 'rm-ep',
+        'BEP/FAILED': 'rm-failed'
     };
     function remarkBadge(remarks) {
-        const cls = REMARK_CLASSES[remarks] || 'bg-light text-dark';
-        return '<span class="badge ' + cls + '">' + escapeHtml(remarks) + '</span>';
+        const cls = REMARK_CLASSES[remarks] || 'rm-empty';
+        return '<span class="rm ' + cls + '">' + escapeHtml(remarks) + '</span>';
+    }
+
+    /** Small slide-in notification (bottom right). type: 'success' | 'danger'. */
+    function toast(type, message) {
+        const area = document.getElementById('toast-area');
+        if (!area) return;
+        const el = document.createElement('div');
+        el.className = 'ust-toast ust-toast-' + type;
+        el.setAttribute('role', type === 'danger' ? 'alert' : 'status');
+        el.innerHTML = '<span class="ust-toast-msg"></span><button type="button" class="ust-toast-x" aria-label="Dismiss">&times;</button>';
+        el.querySelector('.ust-toast-msg').textContent = message;
+        const close = () => { el.classList.add('out'); setTimeout(() => el.remove(), 250); };
+        el.querySelector('.ust-toast-x').addEventListener('click', close);
+        area.appendChild(el);
+        setTimeout(close, 5000);
+    }
+
+    /** Animates a number from its previous value to the target. */
+    function countUp(el, target, decimals, suffix) {
+        if (!el) return;
+        decimals = decimals || 0;
+        suffix = suffix || '';
+        const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const from = parseFloat(el.dataset.v) || 0;
+        el.dataset.v = target;
+        if (reduce || !isFinite(target)) {
+            el.textContent = isFinite(target) ? target.toFixed(decimals) + suffix : '–';
+            return;
+        }
+        const start = performance.now(), duration = 600;
+        function step(now) {
+            const t = Math.min(1, (now - start) / duration);
+            const eased = 1 - Math.pow(1 - t, 3);
+            el.textContent = (from + (target - from) * eased).toFixed(decimals) + suffix;
+            if (t < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
     }
 
     function formatDate(value) {
@@ -129,6 +166,8 @@
         clearAlert: clearAlert,
         signInLink: signInLink,
         remarkBadge: remarkBadge,
+        toast: toast,
+        countUp: countUp,
         formatDate: formatDate
     };
 })();
