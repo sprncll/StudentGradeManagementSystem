@@ -1,0 +1,6 @@
+html { font-size: 15px; position: relative; min-height: 100%; }
+body { background: #f5f7fb; }
+.table td, .table th { vertical-align: middle; }
+.badge { font-size: .8rem; letter-spacing: .02em; }
+.card { border: 0; }
+.text-uppercase::placeholder { text-transform: none; }
