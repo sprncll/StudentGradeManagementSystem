@@ -1,48 +1,80 @@
 @model LoginViewModel
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Env
 @{
     ViewData["Title"] = "Sign in";
 }
-<div class="row justify-content-center mt-2 mt-md-4">
-    <div class="col-lg-10 col-xl-9">
-        <div class="auth-shell">
-            <div class="row g-0">
-                <div class="col-md-5 d-none d-md-block">
-                    <div class="auth-side">
-                        <div class="brand-mark mb-3" style="width:2.6rem;height:2.6rem;font-size:1.1rem">SG</div>
-                        <h2>Student Grade <span>Management</span></h2>
-                        <p class="text-secondary mb-0" style="color:#bdbdbd!important">One place for grades, remarks and records.</p>
-                        <ul>
-                            <li>Faculty post, edit and manage grades</li>
-                            <li>Students view their own grades securely</li>
-                            <li>Remarks computed automatically</li>
-                        </ul>
+<div class="auth-stage">
+    <span class="auth-blob auth-blob-1" aria-hidden="true"></span>
+    <span class="auth-blob auth-blob-2" aria-hidden="true"></span>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-9">
+            <div class="auth-shell" id="auth-card">
+                <div class="row g-0">
+                    <div class="col-md-5 d-none d-md-block">
+                        <div class="auth-side">
+                            <img src="~/images/ust-seal.png" alt="UST Angelicum College seal" class="auth-seal mb-3" asp-append-version="true" />
+                            <h2>Student Grade <span>Management</span></h2>
+                            <p class="mb-0" style="color:#bdbdbd">UST Angelicum College &middot; Quezon City</p>
+                            <ul>
+                                <li>Faculty post, edit and manage grades</li>
+                                <li>Students view their own grades securely</li>
+                                <li>Remarks computed automatically</li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-7">
-                    <div class="auth-form">
-                        <h1 class="h3 mb-1">Welcome back</h1>
-                        <p class="text-muted small mb-4">Faculty and students use their school email.</p>
+                    <div class="col-md-7">
+                        <div class="auth-form">
+                            <h1 class="h3 mb-1">Welcome back</h1>
+                            <p class="text-muted small mb-4">Faculty and students use their school email.</p>
 
-                        <form asp-action="Login" method="post" novalidate id="login-form">
-                            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
-                            <input type="hidden" asp-for="ReturnUrl" />
+                            @if (!string.IsNullOrEmpty(Model.ReturnUrl))
+                            {
+                                <div class="alert alert-warning py-2 small" role="status">Please sign in to continue.</div>
+                            }
 
-                            <div class="mb-3">
-                                <label asp-for="Email" class="form-label"></label>
-                                <input asp-for="Email" type="email" class="form-control form-control-lg" autocomplete="username" autofocus />
-                                <span asp-validation-for="Email" class="text-danger small"></span>
-                            </div>
-                            <div class="mb-2">
-                                <label asp-for="Password" class="form-label"></label>
-                                <div class="input-group">
-                                    <input asp-for="Password" class="form-control form-control-lg" autocomplete="current-password" />
-                                    <button type="button" class="btn pw-toggle" id="pw-toggle" aria-label="Show password" aria-pressed="false">Show</button>
+                            <form asp-action="Login" method="post" novalidate id="login-form">
+                                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+                                <input type="hidden" asp-for="ReturnUrl" />
+
+                                <div class="form-floating mb-1">
+                                    <input asp-for="Email" type="email" class="form-control" placeholder="name@school.edu" autocomplete="username" autofocus />
+                                    <label asp-for="Email"></label>
                                 </div>
-                                <span asp-validation-for="Password" class="text-danger small"></span>
-                                <div class="caps-hint mt-1" id="caps-hint" hidden>Caps Lock is on</div>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-lg w-100 mt-3" id="login-submit">Sign in</button>
-                        </form>
+                                <span asp-validation-for="Email" class="text-danger small d-block mb-2" role="alert"></span>
+
+                                <div class="pw-wrap mt-2">
+                                    <div class="form-floating mb-1">
+                                        <input asp-for="Password" class="form-control pw-input" placeholder="Password" autocomplete="current-password" />
+                                        <label asp-for="Password"></label>
+                                    </div>
+                                    <button type="button" class="pw-eye" id="pw-toggle" aria-label="Show password" aria-pressed="false" title="Show password">
+                                        <svg id="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        <svg id="eye-closed" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a19.8 19.8 0 0 1 5.06-5.94M9.9 4.24A10.9 10.9 0 0 1 12 4c7 0 11 7 11 7a19.7 19.7 0 0 1-3.17 4.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                                    </button>
+                                </div>
+                                <span asp-validation-for="Password" class="text-danger small d-block mb-1" role="alert"></span>
+                                <div class="caps-hint mb-2" id="caps-hint" hidden>Caps Lock is on</div>
+
+                                <div class="form-check my-3">
+                                    <input class="form-check-input" type="checkbox" id="remember-email" />
+                                    <label class="form-check-label small" for="remember-email">Remember my email on this device</label>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-lg w-100" id="login-submit">Sign in</button>
+                            </form>
+
+                            @if (Env.EnvironmentName == "Development")
+                            {
+                                <div class="demo-box mt-4">
+                                    <div class="demo-title">Demo accounts <span>Development only</span></div>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <button type="button" class="chip" data-demo-email="andrea.garcia@example.com" data-demo-pw="Faculty#2026">Faculty &middot; Andrea</button>
+                                        <button type="button" class="chip" data-demo-email="juan.delacruz@example.com" data-demo-pw="Student#2026">Student &middot; Juan</button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -53,28 +85,120 @@
 @section Scripts {
     <script>
         (function () {
+            const card = document.getElementById('auth-card');
+            const form = document.getElementById('login-form');
+            const email = document.getElementById('Email');
             const pw = document.getElementById('Password');
             const toggle = document.getElementById('pw-toggle');
+            const eyeOpen = document.getElementById('eye-open');
+            const eyeClosed = document.getElementById('eye-closed');
             const caps = document.getElementById('caps-hint');
-            const form = document.getElementById('login-form');
+            const remember = document.getElementById('remember-email');
             const submit = document.getElementById('login-submit');
-            if (!pw) return;
+            if (!form || !email || !pw) return;
 
+            const KEY = 'sgms.rememberedEmail';
+            const store = {
+                get() { try { return localStorage.getItem(KEY); } catch (e) { return null; } },
+                set(v) { try { localStorage.setItem(KEY, v); } catch (e) { } },
+                del() { try { localStorage.removeItem(KEY); } catch (e) { } }
+            };
+            const emailPattern = /^[^\s\x40]+\x40[^\s\x40]+\.[^\s\x40]+$/;
+            function messageEl(name) { return document.querySelector('[data-valmsg-for="' + name + '"]'); }
+            function setError(input, name, message) {
+                const el = messageEl(name);
+                if (el) el.textContent = message || '';
+                input.classList.toggle('is-invalid', !!message);
+                input.setAttribute('aria-invalid', message ? 'true' : 'false');
+            }
+            function checkEmail() {
+                const v = email.value.trim();
+                if (!v) { setError(email, 'Email', 'Email is required.'); return false; }
+                if (!emailPattern.test(v)) { setError(email, 'Email', 'Enter a valid email address.'); return false; }
+                setError(email, 'Email', ''); return true;
+            }
+            function checkPassword() {
+                if (!pw.value) { setError(pw, 'Password', 'Password is required.'); return false; }
+                setError(pw, 'Password', ''); return true;
+            }
+            function shake() {
+                card.classList.remove('shake');
+                void card.offsetWidth; // restart the animation
+                card.classList.add('shake');
+            }
+            function resetSubmit() {
+                submit.disabled = false;
+                submit.textContent = 'Sign in';
+            }
+
+            // Restore a remembered email (email only, never the password).
+            const saved = store.get();
+            if (saved && !email.value) {
+                email.value = saved;
+                remember.checked = true;
+                pw.focus();
+            }
+
+            // Errors that came back from the server: mark fields and shake.
+            [[email, 'Email'], [pw, 'Password']].forEach(function (pair) {
+                const el = messageEl(pair[1]);
+                if (el && el.textContent.trim()) pair[0].classList.add('is-invalid');
+            });
+            if (document.querySelector('.validation-summary-errors, .alert-danger li')) {
+                shake();
+                (email.value ? pw : email).focus();
+            }
+
+            // Show / hide password.
             toggle.addEventListener('click', function () {
                 const show = pw.type === 'password';
                 pw.type = show ? 'text' : 'password';
-                toggle.textContent = show ? 'Hide' : 'Show';
+                eyeOpen.hidden = show;
+                eyeClosed.hidden = !show;
                 toggle.setAttribute('aria-pressed', String(show));
                 toggle.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+                toggle.title = show ? 'Hide password' : 'Show password';
                 pw.focus();
             });
+
+            // Caps Lock warning.
             pw.addEventListener('keyup', function (e) {
                 caps.hidden = !(e.getModifierState && e.getModifierState('CapsLock'));
             });
             pw.addEventListener('blur', function () { caps.hidden = true; });
-            form.addEventListener('submit', function () {
+
+            // Inline validation: check on leaving a field, clear as soon as it's fixed.
+            email.addEventListener('blur', checkEmail);
+            pw.addEventListener('blur', function () { if (pw.value) checkPassword(); });
+            email.addEventListener('input', function () { if (email.classList.contains('is-invalid')) checkEmail(); });
+            pw.addEventListener('input', function () { if (pw.classList.contains('is-invalid')) checkPassword(); });
+
+            form.addEventListener('submit', function (event) {
+                const emailOk = checkEmail();
+                const pwOk = checkPassword();
+                if (!emailOk || !pwOk) {
+                    event.preventDefault();
+                    shake();
+                    (emailOk ? pw : email).focus();
+                    return;
+                }
+                if (remember.checked) store.set(email.value.trim()); else store.del();
                 submit.innerHTML = '<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Signing in…';
                 submit.disabled = true;
+            });
+
+            // Browser Back button restores the page from cache: undo the "Signing in…" state.
+            window.addEventListener('pageshow', function (e) { if (e.persisted) resetSubmit(); });
+
+            // One-click demo accounts (rendered only in Development).
+            document.querySelectorAll('[data-demo-email]').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    email.value = btn.dataset.demoEmail;
+                    pw.value = btn.dataset.demoPw;
+                    setError(email, 'Email', '');
+                    setError(pw, 'Password', '');
+                    submit.focus();
+                });
             });
         })();
     </script>

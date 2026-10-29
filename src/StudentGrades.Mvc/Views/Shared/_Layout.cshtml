@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="~/images/ust-seal.png" />
     <title>@ViewData["Title"] - Student Grade Management System</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,8 +17,8 @@
         <nav class="navbar navbar-expand-sm ust-nav mb-4">
             <div class="container">
                 <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-                    <span class="brand-mark">SG</span>
-                    <span>Student Grade Management</span>
+                    <img src="~/images/ust-seal.png" alt="UST Angelicum College seal" class="brand-seal" asp-append-version="true" />
+                    <span class="brand-text">Student Grade Management<small>UST Angelicum College</small></span>
                 </a>
                 @if (User.Identity?.IsAuthenticated == true)
                 {
@@ -41,7 +42,7 @@
 
     <footer class="ust-footer py-3 small">
         <div class="container d-flex flex-wrap justify-content-between gap-2">
-            <span><strong>Student Grade Management System</strong></span>
+            <span><strong>UST Angelicum College</strong> &middot; Student Grade Management System</span>
             <span>Web Systems and Technologies &middot; Final Practical Examination</span>
         </div>
     </footer>
